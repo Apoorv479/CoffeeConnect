@@ -8,6 +8,7 @@ import PlacePage from './pages/PlacePage';
 import FavoritesPage from './pages/FavoritesPage';
 import AboutPage from './pages/AboutPage';
 import SettingsPage from './pages/SettingsPage';
+import SignupPage from './pages/SignupPage';
 
 const Layout = () => (
   <div className="app-layout">
@@ -28,6 +29,7 @@ const App = () => {
         <Route path="favorites" element={<FavoritesPage />} />
         <Route path="about" element={<AboutPage />} />
         <Route path="settings" element={<SettingsPage />} />
+        <Route path="signup" element={<SignupPage />} />
       </Route>
     </Routes>
   );
