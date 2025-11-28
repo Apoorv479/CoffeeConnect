@@ -60,7 +60,7 @@ const HomePage = () => {
       <div className="sidebar">
         <div style={{padding: '1.5rem', borderBottom: '1px solid #EAECEF'}}>
           <h3 style={{fontFamily: 'Merriweather, serif', fontSize: '1.2rem', color: '#2C3E50'}}>
-            {searchedLocation ? (searchedLocation.name === "You are here" ? "Near You" : searchedLocation.name.split(',')[0]) : "Nearby Cafes"}
+            {searchedLocation ? (searchedLocation.name === "You are here" ? " Cafes Near You" : searchedLocation.name.split(',')[0]) : "Nearby Cafes"}
           </h3>
           <p style={{fontSize: '0.85rem', color: '#7F8C8D', marginTop: '5px'}}>
              {searchLoading ? `Scanning ${radius/1000}km radius...` : `Found ${places.length} places within ${radius/1000}km`}

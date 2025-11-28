@@ -9,6 +9,8 @@ import FavoritesPage from './pages/FavoritesPage';
 import AboutPage from './pages/AboutPage';
 import SettingsPage from './pages/SettingsPage';
 import SignupPage from './pages/SignupPage';
+import LoginPage from './pages/LoginPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const Layout = () => (
   <div className="app-layout">
@@ -24,12 +26,42 @@ const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        <Route index element={<HomePage />} />
-        <Route path="place/:placeId" element={<PlacePage />} />
-        <Route path="favorites" element={<FavoritesPage />} />
-        <Route path="about" element={<AboutPage />} />
-        <Route path="settings" element={<SettingsPage />} />
+        
+        {/* --- PUBLIC ROUTES --- */}
         <Route path="signup" element={<SignupPage />} />
+        <Route path="login" element={<LoginPage />} />
+
+        {/* --- PROTECTED ROUTES --- */}
+        <Route index element={
+          <ProtectedRoute>
+            <HomePage />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="place/:placeId" element={
+          <ProtectedRoute>
+            <PlacePage />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="favorites" element={
+          <ProtectedRoute>
+            <FavoritesPage />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="about" element={
+          <ProtectedRoute>
+            <AboutPage />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="settings" element={
+          <ProtectedRoute>
+            <SettingsPage />
+          </ProtectedRoute>
+        } />
+
       </Route>
     </Routes>
   );

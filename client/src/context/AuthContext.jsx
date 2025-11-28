@@ -7,17 +7,40 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('cafefinder_user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  
   const [token, setToken] = useState(localStorage.getItem('cafefinder_token'));
 
-  // App load hone par check karo ki user pehle se logged in hai kya?
-  useEffect(() => {
-    if (token) {
-      // Future mein hum yahan server se verify karenge, abhi ke liye bas token save rakh rahe hain
-      // Decode token logic can be added here
-    }
-  }, [token]);
+  // --- LOGIN FUNCTION ---
+  const login = async (email, password) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      localStorage.setItem('cafefinder_token', data.token);
+      localStorage.setItem('cafefinder_user', JSON.stringify(data)); 
+      
+      setToken(data.token);
+      setUser(data);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // --- REGISTER FUNCTION ---
   const register = async (name, email, password) => {
     try {
       const response = await fetch('http://localhost:5000/api/auth/register', {
@@ -32,8 +55,9 @@ export const AuthProvider = ({ children }) => {
         throw new Error(data.message || 'Registration failed');
       }
 
-      // Success: Token aur Data save karo
       localStorage.setItem('cafefinder_token', data.token);
+      localStorage.setItem('cafefinder_user', JSON.stringify(data)); 
+      
       setToken(data.token);
       setUser(data);
       return data;
@@ -42,15 +66,17 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // --- LOGOUT FUNCTION ---
   const logout = () => {
     localStorage.removeItem('cafefinder_token');
+    localStorage.removeItem('cafefinder_user');
     setToken(null);
     setUser(null);
-    window.location.href = '/';
+    window.location.href = '/login';
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, register, logout }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

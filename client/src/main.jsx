@@ -7,11 +7,11 @@ import './index.css';
 import 'leaflet/dist/leaflet.css';
 import { SearchProvider } from './context/SearchContext';
 import { SettingsProvider } from './context/SettingsContext';
-import { AuthProvider } from './context/AuthContext'; // Import kiya
+import { AuthProvider } from './context/AuthContext';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <AuthProvider> {/* Sabse upar wrap kiya */}
+    <AuthProvider>
       <SettingsProvider>
         <SearchProvider>
           <BrowserRouter>

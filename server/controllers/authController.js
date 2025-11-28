@@ -1,12 +1,12 @@
 // server/controllers/authController.js
-const asyncHandler = require('express-async-handler'); // Error handling ko aasaan banata hai
+const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-// --- Helper Function: Token Generate karna ---
+// --- Helper Function: Generate Token ---
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '30d', // Token 30 din tak chalega
+    expiresIn: '30d',
   });
 };
 
@@ -16,7 +16,6 @@ const generateToken = (id) => {
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
-  // 1. Check karo user pehle se hai kya?
   const userExists = await User.findOne({ email });
 
   if (userExists) {
@@ -24,11 +23,10 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('User already exists');
   }
 
-  // 2. Naya user banao
   const user = await User.create({
     name,
     email,
-    password, // Model isse khud encrypt kar dega
+    password,
   });
 
   if (user) {
@@ -36,7 +34,7 @@ const registerUser = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      token: generateToken(user._id), // Token diya
+      token: generateToken(user._id),
     });
   } else {
     res.status(400);
@@ -50,16 +48,14 @@ const registerUser = asyncHandler(async (req, res) => {
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  // 1. Email dhoondo
   const user = await User.findOne({ email });
 
-  // 2. Password match karo (Model wala method use kiya)
   if (user && (await user.matchPassword(password))) {
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      token: generateToken(user._id), // Token diya
+      token: generateToken(user._id),
     });
   } else {
     res.status(401);

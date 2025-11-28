@@ -4,23 +4,26 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
 
-// Routes import kiye
+// Import Routes
 const authRoutes = require('./routes/authRoutes');
+const reviewRoutes = require('./routes/reviewRoutes'); // <-- NEW IMPORT
 
 dotenv.config();
-
-// Database Connect
 connectDB();
 
 const app = express();
 
-// Middlewares
-app.use(cors());
-app.use(express.json()); // JSON data allow kiya
+// --- CORS CONFIGURATION (Dynamic) ---
+const allowedOrigin = process.env.CLIENT_URL || "http://localhost:5173";
+
+app.use(cors({
+  origin: allowedOrigin, 
+  credentials: true
+}));
 
 // --- ROUTES ---
-// Agar URL '/api/auth' se shuru ho, to authRoutes file mein bhejo
 app.use('/api/auth', authRoutes);
+app.use('/api/reviews', reviewRoutes); // <-- NEW CONNECTION
 
 // Test Route
 app.get('/', (req, res) => {

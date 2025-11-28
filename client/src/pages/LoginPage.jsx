@@ -1,15 +1,15 @@
-// client/src/pages/SignupPage.jsx
+// client/src/pages/LoginPage.jsx
 import React, { useState } from 'react';
-import { FaCoffee, FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
+import { FaCoffee, FaEnvelope, FaLock } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-const SignupPage = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+const LoginPage = () => {
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const { register } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -22,7 +22,8 @@ const SignupPage = () => {
     setLoading(true);
 
     try {
-      await register(formData.name, formData.email, formData.password);
+      // Login API call
+      await login(formData.email, formData.password);
       navigate('/');
     } catch (err) {
       setError(err.message);
@@ -39,8 +40,8 @@ const SignupPage = () => {
           <div className="auth-icon-wrapper">
             <FaCoffee />
           </div>
-          <h2>Join CafeFinder</h2>
-          <p>Discover the best brews around you</p>
+          <h2>Welcome Back</h2>
+          <p>Login to continue exploring</p>
         </div>
 
         {/* Error Message */}
@@ -48,17 +49,6 @@ const SignupPage = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Full Name</label>
-            <div className="input-wrapper">
-              <FaUser className="input-icon" />
-              <input 
-                type="text" name="name" placeholder="John Doe" required 
-                value={formData.name} onChange={handleChange}
-              />
-            </div>
-          </div>
-
           <div className="form-group">
             <label>Email Address</label>
             <div className="input-wrapper">
@@ -77,22 +67,21 @@ const SignupPage = () => {
               <input 
                 type="password" name="password" placeholder="••••••••" required 
                 value={formData.password} onChange={handleChange}
-                minLength="6"
               />
             </div>
           </div>
 
           <button type="submit" className="auth-btn" disabled={loading}>
-            {loading ? 'Creating Account...' : 'Create Account'}
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
         <div className="auth-footer">
-          <p>Already have an account? <Link to="/login">Login here</Link></p>
+          <p>Don't have an account? <Link to="/signup">Sign up here</Link></p>
         </div>
       </div>
     </div>
   );
 };
 
-export default SignupPage;
+export default LoginPage;
