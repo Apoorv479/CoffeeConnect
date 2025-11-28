@@ -6,26 +6,32 @@ const connectDB = require('./config/db');
 
 // Import Routes
 const authRoutes = require('./routes/authRoutes');
-const reviewRoutes = require('./routes/reviewRoutes'); // <-- NEW IMPORT
+const reviewRoutes = require('./routes/reviewRoutes');
 
 dotenv.config();
 connectDB();
 
 const app = express();
 
-// --- CORS CONFIGURATION (Dynamic) ---
-const allowedOrigin = process.env.CLIENT_URL || "http://localhost:5173";
+// --- MIDDLEWARES (Sabse Zaroori Hissa) ---
 
+// 1. CORS allow karo
+const allowedOrigin = process.env.CLIENT_URL || "http://localhost:5173";
 app.use(cors({
-  origin: allowedOrigin, 
+  origin: allowedOrigin,
   credentials: true
 }));
 
+// 2. JSON Parser (YE LINE MISSING YA GALAT JAGAH THI)
+// Is line ko Routes se upar hona zaroori hai!
+app.use(express.json()); 
+
+// ----------------------------------------
+
 // --- ROUTES ---
 app.use('/api/auth', authRoutes);
-app.use('/api/reviews', reviewRoutes); // <-- NEW CONNECTION
+app.use('/api/reviews', reviewRoutes);
 
-// Test Route
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
