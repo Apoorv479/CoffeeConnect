@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import useFavorites from '../hooks/useFavorites';
 import { useAuth } from '../context/AuthContext'; // Auth Import kiya
 // Icons imports
-import { FaHeart, FaRegHeart, FaTimes, FaUtensils, FaGlobe, FaClock, FaWheelchair, FaMapMarkerAlt, FaStar, FaRegStar } from 'react-icons/fa';
+import { FaCamera, FaTimes, FaStar, FaMapMarkerAlt, FaUtensils, FaClock, FaGlobe, FaWheelchair, FaHeart, FaRegHeart } from 'react-icons/fa';
 
 const PlaceDetailsPanel = ({ place, onClose }) => {
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -19,6 +19,7 @@ const PlaceDetailsPanel = ({ place, onClose }) => {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0); // Star hover effect ke liye
   const [comment, setComment] = useState("");
+  const [imageFile, setImageFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [loadingReviews, setLoadingReviews] = useState(false);
 
@@ -173,7 +174,7 @@ const PlaceDetailsPanel = ({ place, onClose }) => {
             <div style={{ background: '#FFF8F3', padding: '1.2rem', borderRadius: '12px', marginBottom: '2rem', border: '1px solid #ffdec0' }}>
                 <p style={{fontWeight: '600', marginBottom: '0.5rem', color: '#D35400'}}>Rate this place</p>
                 
-                {/* Star Input */}
+                {/* Stars ... (Same Code) */}
                 <div style={{display: 'flex', gap: '5px', marginBottom: '1rem'}}>
                     {[...Array(5)].map((star, index) => {
                         const ratingValue = index + 1;
@@ -197,35 +198,54 @@ const PlaceDetailsPanel = ({ place, onClose }) => {
                 </div>
 
                 <textarea 
-                    placeholder="Share your experience (e.g. Best coffee ever!)..." 
+                    placeholder="Share your experience..." 
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     style={{width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd', minHeight: '80px', outline: 'none', fontSize: '0.9rem'}}
                 />
 
+                {/* --- IMAGE UPLOAD INPUT --- */}
+                <div style={{marginTop: '10px', display: 'flex', alignItems: 'center', gap: '10px'}}>
+                    <label style={{
+                        display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', 
+                        padding: '6px 12px', background: '#fff', border: '1px solid #ddd', borderRadius: '5px', fontSize: '0.85rem'
+                    }}>
+                        <FaCamera color="#555"/> 
+                        {imageFile ? "Image Selected" : "Add Photo"}
+                        <input 
+                            type="file" 
+                            accept="image/*" 
+                            onChange={(e) => setImageFile(e.target.files[0])}
+                            style={{display: 'none'}}
+                        />
+                    </label>
+                    {imageFile && <span style={{fontSize: '0.8rem', color: '#27ae60'}}>{imageFile.name}</span>}
+                </div>
+
                 <button 
                     onClick={handleSubmitReview}
                     disabled={submitting}
                     style={{
-                        marginTop: '10px', padding: '8px 16px', background: '#2C3E50', color: 'white', 
+                        marginTop: '15px', padding: '8px 16px', background: '#2C3E50', color: 'white', 
                         border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: '500'
                     }}
                 >
-                    {submitting ? 'Posting...' : 'Submit Review'}
+                    {submitting ? 'Uploading...' : 'Submit Review'}
                 </button>
             </div>
         ) : (
-            <div style={{textAlign: 'center', padding: '1rem', background: '#F4F6F8', borderRadius: '8px', marginBottom: '2rem'}}>
+             // ... Guest Message (Same)
+             <div style={{textAlign: 'center', padding: '1rem', background: '#F4F6F8', borderRadius: '8px', marginBottom: '2rem'}}>
                 <p style={{color: '#666'}}>Please <strong style={{color: '#D35400'}}>Login</strong> to write a review.</p>
             </div>
         )}
 
-        {/* 2. REVIEWS LIST */}
+        {/* 2. REVIEWS LIST (Updated to show Image) */}
         <div className="reviews-list">
             {loadingReviews ? (
-                <p style={{color: '#999', fontStyle: 'italic'}}>Loading reviews...</p>
+                <p style={{color: '#999'}}>Loading...</p>
             ) : reviews.length === 0 ? (
-                <p style={{color: '#999', fontStyle: 'italic'}}>No reviews yet. Be the first to review!</p>
+                <p style={{color: '#999'}}>No reviews yet.</p>
             ) : (
                 reviews.map((rev) => (
                     <div key={rev._id} style={{marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid #eee'}}>
@@ -241,13 +261,21 @@ const PlaceDetailsPanel = ({ place, onClose }) => {
                             ))}
                         </div>
                         <p style={{color: '#555', fontSize: '0.95rem', lineHeight: '1.4'}}>{rev.comment}</p>
+                        
+                        {/* Show Image if Exists */}
+                        {rev.image && (
+                            <img 
+                                src={rev.image} 
+                                alt="Review" 
+                                style={{marginTop: '10px', borderRadius: '8px', maxHeight: '150px', maxWidth: '100%', objectFit: 'cover', border: '1px solid #eee'}}
+                            />
+                        )}
                     </div>
                 ))
             )}
         </div>
-
-      </div>
-    </div>
+          </div>
+            </div>
   );
 };
 
